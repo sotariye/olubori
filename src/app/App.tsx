@@ -646,17 +646,42 @@ function RSVPAndWellWishes() {
   const [wishesName, setWishesName] = useState("");
   const [wishesMessage, setWishesMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleWishesSubmit = (e: React.FormEvent) => {
+  const handleWishesSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wishesName || !wishesMessage) return;
+    if (!wishesName.trim() || !wishesMessage.trim()) return;
 
-    confetti({
-      particleCount: 100,
-      spread: 60,
-      origin: { y: 0.85 }
-    });
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const response = await fetch("https://formspree.io/f/xkjnoleb", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: wishesName,
+          message: wishesMessage
+        })
+      });
+
+      if (response.ok) {
+        confetti({
+          particleCount: 100,
+          spread: 60,
+          origin: { y: 0.85 }
+        });
+        setSubmitted(true);
+      } else {
+        const errorData = await response.json().catch(() => null);
+        toast.error(errorData?.error || "Failed to send blessing. Please try again.");
+      }
+    } catch (err) {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -787,9 +812,10 @@ function RSVPAndWellWishes() {
 
                 <button
                   type="submit"
-                  className="w-full py-3 border border-coffee text-[10px] tracking-widest uppercase font-bold text-coffee hover:bg-coffee hover:text-white transition-all duration-300 cursor-pointer"
+                  disabled={submitting}
+                  className="w-full py-3 border border-coffee text-[10px] tracking-widest uppercase font-bold text-coffee hover:bg-coffee hover:text-white transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Submit Message
+                  {submitting ? "Sending..." : "Submit Message"}
                 </button>
               </form>
             )}
