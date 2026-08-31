@@ -15,7 +15,6 @@ import baby2 from "../imports/photos/baby2.jpg";
 import baby3 from "../imports/photos/baby3.jpg";
 import baby4 from "../imports/photos/baby4.jpg";
 import paypalQr from "../imports/photos/paypal-qr.png";
-import songUrl from "../imports/audio/im-still-in-love-with-you.mp3";
 
 const photos = [baby3, baby1, baby2, baby4];
 
@@ -845,14 +844,10 @@ export default function App() {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Sean Paul feat. Sasha - I'm Still In Love With You
-  const audioUrl = songUrl;
+  // Classical piano loop stream (default off)
+  const audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3";
 
   useEffect(() => {
-    audioRef.current = new Audio(audioUrl);
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.2;
-
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -862,15 +857,23 @@ export default function App() {
   }, []);
 
   const togglePlay = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current) {
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.loop = true;
+      audioRef.current.volume = 0.2;
+    }
+
     if (playing) {
       audioRef.current.pause();
+      setPlaying(false);
     } else {
-      audioRef.current.play().catch(err => {
-        console.warn("Audio autoplay blocked by browser:", err);
+      audioRef.current.play().then(() => {
+        setPlaying(true);
+      }).catch(err => {
+        console.warn("Audio playback blocked:", err);
+        setPlaying(false);
       });
     }
-    setPlaying(!playing);
   };
 
   return (
