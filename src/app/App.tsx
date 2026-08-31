@@ -15,6 +15,7 @@ import baby2 from "../imports/photos/baby2.jpg";
 import baby3 from "../imports/photos/baby3.jpg";
 import baby4 from "../imports/photos/baby4.jpg";
 import paypalQr from "../imports/photos/paypal-qr.png";
+import songUrl from "../imports/audio/im-still-in-love-with-you.mp3";
 
 const photos = [baby3, baby1, baby2, baby4];
 
@@ -853,8 +854,8 @@ export default function App() {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Soft classical piano loop stream
-  const audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3";
+  // Sean Paul feat. Sasha - I'm Still In Love With You
+  const audioUrl = songUrl;
 
   useEffect(() => {
     audioRef.current = new Audio(audioUrl);
