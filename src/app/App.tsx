@@ -751,19 +751,10 @@ function RSVPAndWellWishes() {
                 </p>
                 <p className="text-sm text-coffee font-semibold">Your blessing has been shared.</p>
                 <p className="text-xs text-coffee/60 leading-relaxed max-w-xs mx-auto">
-                  We appreciate your warm wishes as we begin our marriage. You can also send this message to us directly.
+                  We appreciate your warm wishes and prayers as we begin our marriage.
                 </p>
                 
-                <div className="pt-4 flex flex-col gap-2">
-                  <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Dear Nina & Ebenezer, ${wishesMessage} - From ${wishesName}`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex text-[10px] tracking-widest uppercase font-bold text-coffee border border-coffee/60 px-4 py-2 hover:border-gold hover:text-gold transition-colors mx-auto"
-                  >
-                    Send to WhatsApp
-                    <ExternalLink size={9} className="ml-1 mt-0.5" />
-                  </a>
+                <div className="pt-4">
                   <button
                     onClick={() => {
                       setWishesName("");
