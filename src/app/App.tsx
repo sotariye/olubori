@@ -644,6 +644,7 @@ function DressCodeAndPalette() {
 
 function RSVPAndWellWishes() {
   const [wishesName, setWishesName] = useState("");
+  const [wishesEmail, setWishesEmail] = useState("");
   const [attendance, setAttendance] = useState<string>("Attending Both Celebrations");
   const [guestCount, setGuestCount] = useState<string>("1");
   const [wishesMessage, setWishesMessage] = useState("");
@@ -652,7 +653,7 @@ function RSVPAndWellWishes() {
 
   const handleWishesSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wishesName.trim()) return;
+    if (!wishesName.trim() || !wishesEmail.trim()) return;
 
     setSubmitting(true);
     try {
@@ -664,6 +665,7 @@ function RSVPAndWellWishes() {
         },
         body: JSON.stringify({
           name: wishesName,
+          email: wishesEmail,
           attendance: attendance,
           guests: attendance !== "Regretfully Decline" ? guestCount : "0",
           message: wishesMessage || "(No message provided)"
@@ -754,13 +756,14 @@ function RSVPAndWellWishes() {
                 </p>
                 <p className="text-sm text-coffee font-semibold">Your RSVP &amp; blessing have been received.</p>
                 <p className="text-xs text-coffee/60 leading-relaxed max-w-xs mx-auto">
-                  We appreciate your warm wishes and prayers as we begin our marriage.
+                  We appreciate your warm wishes and prayers as we begin our marriage. If you are attending, we will email your entry access card to <strong>{wishesEmail}</strong> prior to the celebrations.
                 </p>
                 
                 <div className="pt-4">
                   <button
                     onClick={() => {
                       setWishesName("");
+                      setWishesEmail("");
                       setWishesMessage("");
                       setAttendance("Attending Both Celebrations");
                       setGuestCount("1");
@@ -782,15 +785,31 @@ function RSVPAndWellWishes() {
                   Kindly let us know if you will celebrate with us and leave a blessing or prayer in our digital guestbook.
                 </p>
 
-                {/* Underline Inputs */}
+                {/* Name Input */}
                 <div className="flex flex-col border-b border-coffee/20 pb-1">
-                  <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">Your Name *</label>
+                  <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">Your Full Name *</label>
                   <input
                     type="text"
                     required
                     value={wishesName}
                     onChange={(e) => setWishesName(e.target.value)}
                     placeholder="e.g., Pastor &amp; Mrs. Smith"
+                    className="w-full text-sm bg-transparent outline-none py-1 font-serif text-coffee"
+                  />
+                </div>
+
+                {/* Email Address Input */}
+                <div className="flex flex-col border-b border-coffee/20 pb-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">Email Address *</label>
+                    <span className="text-[8px] sm:text-[9px] text-gold/90 italic font-serif">For your entry access card</span>
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={wishesEmail}
+                    onChange={(e) => setWishesEmail(e.target.value)}
+                    placeholder="e.g., guest@example.com"
                     className="w-full text-sm bg-transparent outline-none py-1 font-serif text-coffee"
                   />
                 </div>
