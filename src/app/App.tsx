@@ -286,9 +286,9 @@ function Celebrations() {
       mapUrl: "https://www.google.com/maps/search/?api=1&query=Pavillion+Event+Centre+13+Evo+Road+Elechi+Port+Harcourt"
     },
     {
-      title: "Church Ceremony",
+      title: "White Wedding",
       date: "Sunday, December 27, 2026",
-      time: "10:00 AM",
+      time: "1:00 PM",
       venue: "RCCG Jesus House",
       address: "2b Degema Cl, Obia, Port Harcourt",
       notes: "Solemnization of Holy Matrimony followed by a reception.",
@@ -624,9 +624,9 @@ function DressCodeAndPalette() {
 
           {/* Black Tie Sunday */}
           <div className="border-t border-coffee/10 pt-8 text-center space-y-4">
-            <h3 className="text-xl font-normal text-coffee font-serif italic">Black Tie Ceremony</h3>
+            <h3 className="text-xl font-normal text-coffee font-serif italic">White Wedding (Black Tie)</h3>
             <p className="text-sm text-coffee/85 leading-relaxed max-w-md mx-auto">
-              Our Church Ceremony on Sunday will be a formal <strong>Black Tie</strong> affair. We request that gentlemen wear formal tuxedos or dark suits with bow ties, and ladies wear elegant floor-length evening attire.
+              Our White Wedding on Sunday will be a formal <strong>Black Tie</strong> affair. We request that gentlemen wear formal tuxedos or dark suits with bow ties, and ladies wear elegant floor-length evening attire.
             </p>
           </div>
 
@@ -644,13 +644,15 @@ function DressCodeAndPalette() {
 
 function RSVPAndWellWishes() {
   const [wishesName, setWishesName] = useState("");
+  const [attendance, setAttendance] = useState<string>("Attending Both Celebrations");
+  const [guestCount, setGuestCount] = useState<string>("1");
   const [wishesMessage, setWishesMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleWishesSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wishesName.trim() || !wishesMessage.trim()) return;
+    if (!wishesName.trim()) return;
 
     setSubmitting(true);
     try {
@@ -662,7 +664,9 @@ function RSVPAndWellWishes() {
         },
         body: JSON.stringify({
           name: wishesName,
-          message: wishesMessage
+          attendance: attendance,
+          guests: attendance !== "Regretfully Decline" ? guestCount : "0",
+          message: wishesMessage || "(No message provided)"
         })
       });
 
@@ -675,7 +679,7 @@ function RSVPAndWellWishes() {
         setSubmitted(true);
       } else {
         const errorData = await response.json().catch(() => null);
-        toast.error(errorData?.error || "Failed to send blessing. Please try again.");
+        toast.error(errorData?.error || "Failed to send RSVP. Please try again.");
       }
     } catch (err) {
       toast.error("Network error. Please try again.");
@@ -711,7 +715,7 @@ function RSVPAndWellWishes() {
             </p>
             
             <p className="text-sm text-coffee/85 leading-relaxed">
-              As we are not tracking online form submissions, please contact the families directly to confirm your attendance, coordinate colors, or clarify event inquiries.
+              Please feel free to RSVP and share your warm wishes using the form, or contact the family coordinators directly to confirm your attendance, coordinate colors, or clarify event inquiries.
             </p>
 
             <div className="space-y-6 border-t border-coffee/10 pt-6">
@@ -748,7 +752,7 @@ function RSVPAndWellWishes() {
                 <p className="font-serif italic text-3xl text-gold" style={{ fontFamily: "'Monsieur La Doulaise', cursive" }}>
                   Thank you
                 </p>
-                <p className="text-sm text-coffee font-semibold">Your blessing has been shared.</p>
+                <p className="text-sm text-coffee font-semibold">Your RSVP &amp; blessing have been received.</p>
                 <p className="text-xs text-coffee/60 leading-relaxed max-w-xs mx-auto">
                   We appreciate your warm wishes and prayers as we begin our marriage.
                 </p>
@@ -758,27 +762,29 @@ function RSVPAndWellWishes() {
                     onClick={() => {
                       setWishesName("");
                       setWishesMessage("");
+                      setAttendance("Attending Both Celebrations");
+                      setGuestCount("1");
                       setSubmitted(false);
                     }}
                     className="text-[10px] tracking-widest uppercase text-coffee/40 hover:text-coffee/70 transition-colors cursor-pointer"
                   >
-                    [ write another ]
+                    [ submit another response ]
                   </button>
                 </div>
               </div>
             ) : (
               <form onSubmit={handleWishesSubmit} className="space-y-6">
                 <span className="text-[10px] tracking-[0.2em] uppercase font-bold text-gold/80 font-sans block">
-                  LEAVE A BLESSING
+                  RSVP &amp; LEAVE A BLESSING
                 </span>
                 
                 <p className="text-xs text-coffee/65 leading-relaxed">
-                  We would love for you to leave a prayer, note, or blessing in our digital guestbook.
+                  Kindly let us know if you will celebrate with us and leave a blessing or prayer in our digital guestbook.
                 </p>
 
-                {/* Underline Inputs (replaces boxed fields) */}
+                {/* Underline Inputs */}
                 <div className="flex flex-col border-b border-coffee/20 pb-1">
-                  <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">Your Name</label>
+                  <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">Your Name *</label>
                   <input
                     type="text"
                     required
@@ -789,10 +795,61 @@ function RSVPAndWellWishes() {
                   />
                 </div>
 
+                {/* Attendance Options */}
+                <div className="space-y-2 pt-1">
+                  <label className="text-[9px] uppercase tracking-wider text-coffee/50 font-semibold block">
+                    Will you be attending?
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {[
+                      { id: "both", label: "Attending Both Celebrations" },
+                      { id: "traditional", label: "Traditional Only (Dec 26)" },
+                      { id: "white", label: "White Wedding Only (Dec 27)" },
+                      { id: "decline", label: "Regretfully Decline" }
+                    ].map((opt) => (
+                      <button
+                        type="button"
+                        key={opt.id}
+                        onClick={() => setAttendance(opt.label)}
+                        className={`text-left px-3 py-2.5 border text-[11px] transition-all duration-200 cursor-pointer flex items-center gap-2 ${
+                          attendance === opt.label
+                            ? "border-gold bg-gold/10 text-coffee font-medium"
+                            : "border-coffee/15 hover:border-coffee/30 text-coffee/65 bg-transparent"
+                        }`}
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full border flex items-center justify-center shrink-0 ${
+                          attendance === opt.label ? "border-gold bg-gold" : "border-coffee/30"
+                        }`} />
+                        <span className="leading-tight">{opt.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Number of Guests (if attending) */}
+                {attendance !== "Regretfully Decline" && (
+                  <div className="flex flex-col border-b border-coffee/20 pb-1">
+                    <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">
+                      Number of Guests in Your Party
+                    </label>
+                    <select
+                      value={guestCount}
+                      onChange={(e) => setGuestCount(e.target.value)}
+                      className="w-full text-sm bg-transparent outline-none py-1 font-serif text-coffee cursor-pointer"
+                    >
+                      <option value="1" className="bg-[#FAF5EE]">1 Guest</option>
+                      <option value="2" className="bg-[#FAF5EE]">2 Guests</option>
+                      <option value="3" className="bg-[#FAF5EE]">3 Guests</option>
+                      <option value="4+" className="bg-[#FAF5EE]">4+ Guests</option>
+                    </select>
+                  </div>
+                )}
+
                 <div className="flex flex-col border-b border-coffee/20 pb-1">
-                  <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">Your Message</label>
+                  <label className="text-[9px] uppercase tracking-wider text-coffee/40 mb-0.5">
+                    Your Message / Well Wishes {attendance === "Regretfully Decline" ? "" : "(Optional)"}
+                  </label>
                   <textarea
-                    required
                     rows={3}
                     value={wishesMessage}
                     onChange={(e) => setWishesMessage(e.target.value)}
@@ -806,7 +863,7 @@ function RSVPAndWellWishes() {
                   disabled={submitting}
                   className="w-full py-3 border border-coffee text-[10px] tracking-widest uppercase font-bold text-coffee hover:bg-coffee hover:text-white transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {submitting ? "Sending..." : "Submit Message"}
+                  {submitting ? "Sending..." : "Submit RSVP & Blessing"}
                 </button>
               </form>
             )}
