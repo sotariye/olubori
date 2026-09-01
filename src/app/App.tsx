@@ -811,16 +811,29 @@ function RSVPAndWellWishes() {
                         type="button"
                         key={opt.id}
                         onClick={() => setAttendance(opt.label)}
-                        className={`text-left px-3 py-2.5 border text-[11px] transition-all duration-200 cursor-pointer flex items-center gap-2 ${
+                        className={`text-left px-3.5 py-3 border text-xs transition-all duration-150 cursor-pointer flex items-center justify-between gap-3 select-none ${
                           attendance === opt.label
-                            ? "border-gold bg-gold/10 text-coffee font-medium"
-                            : "border-coffee/15 hover:border-coffee/30 text-coffee/65 bg-transparent"
+                            ? "font-semibold shadow-xs"
+                            : "opacity-75 hover:opacity-100 hover:bg-gold/5"
                         }`}
+                        style={{
+                          backgroundColor: attendance === opt.label ? "rgba(197, 168, 90, 0.18)" : "transparent",
+                          borderColor: attendance === opt.label ? GOLD : "rgba(62, 39, 35, 0.2)",
+                          color: COFFEE,
+                        }}
                       >
-                        <span className={`w-2.5 h-2.5 rounded-full border flex items-center justify-center shrink-0 ${
-                          attendance === opt.label ? "border-gold bg-gold" : "border-coffee/30"
-                        }`} />
-                        <span className="leading-tight">{opt.label}</span>
+                        <span className="leading-snug">{opt.label}</span>
+                        <span 
+                          className="w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all"
+                          style={{
+                            borderColor: attendance === opt.label ? GOLD : "rgba(62, 39, 35, 0.3)",
+                            backgroundColor: attendance === opt.label ? GOLD : "transparent"
+                          }}
+                        >
+                          {attendance === opt.label && (
+                            <Check size={10} className="text-[#FAF5EE] stroke-[3]" />
+                          )}
+                        </span>
                       </button>
                     ))}
                   </div>
